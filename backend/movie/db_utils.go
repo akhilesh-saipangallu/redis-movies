@@ -20,6 +20,11 @@ func listMoviesWithFilters(ctx context.Context, filters listMovieFilters) ([]mov
 	if filters.genre != nil {
 		query = query + fmt.Sprintf(`@genres:{"%s"}`, *filters.genre)
 	}
+	if filters.searchText != nil {
+		query = query + fmt.Sprintf(`@title:*%s*`, *filters.searchText)
+	}
+	// TODO: year filter
+
 	if query == "" {
 		query = "*"
 	}
