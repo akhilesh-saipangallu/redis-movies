@@ -4,8 +4,8 @@ type movieDetails struct {
 	Id          string `json:"id"`
 	Poster      string `json:"poster"`
 	Title       string `json:"title"`
-	ReleaseDate string `json:"release_date"`
-	VoteAverage string `json:"vote_average"`
+	ReleaseYear string `json:"release_year"`
+	Tagline     string `json:"tagline"`
 }
 
 type movieErrorResponse struct {

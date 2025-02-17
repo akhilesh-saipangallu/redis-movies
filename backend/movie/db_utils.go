@@ -48,8 +48,8 @@ func listMoviesWithFilters(ctx context.Context, filters listMovieFilters) ([]mov
 				{FieldName: "$.id", As: "id"},
 				{FieldName: "$.poster", As: "poster"},
 				{FieldName: "$.title", As: "title"},
-				{FieldName: "$.release_date", As: "release_date"},
-				{FieldName: "$.vote_average", As: "vote_average"},
+				{FieldName: "$.release_year", As: "release_year"},
+				{FieldName: "$.tagline", As: "tagline"},
 			},
 			DialectVersion: 2,
 		},
@@ -69,8 +69,8 @@ func listMoviesWithFilters(ctx context.Context, filters listMovieFilters) ([]mov
 			Id:          doc.Fields["id"],
 			Poster:      doc.Fields["poster"],
 			Title:       doc.Fields["title"],
-			ReleaseDate: doc.Fields["release_date"],
-			VoteAverage: doc.Fields["vote_average"],
+			ReleaseYear: doc.Fields["release_year"],
+			Tagline:     doc.Fields["tagline"],
 		})
 	}
 
@@ -91,8 +91,8 @@ func getPopularMovies(ctx context.Context) ([]movieDetails, error) {
 				{FieldName: "$.id", As: "id"},
 				{FieldName: "$.poster", As: "poster"},
 				{FieldName: "$.title", As: "title"},
-				{FieldName: "$.release_date", As: "release_date"},
-				{FieldName: "$.vote_average", As: "vote_average"},
+				{FieldName: "$.release_year", As: "release_year"},
+				{FieldName: "$.tagline", As: "tagline"},
 			},
 			DialectVersion: 2,
 		},
@@ -112,8 +112,8 @@ func getPopularMovies(ctx context.Context) ([]movieDetails, error) {
 			Id:          doc.Fields["id"],
 			Poster:      doc.Fields["poster"],
 			Title:       doc.Fields["title"],
-			ReleaseDate: doc.Fields["release_date"],
-			VoteAverage: doc.Fields["vote_average"],
+			ReleaseYear: doc.Fields["release_year"],
+			Tagline:     doc.Fields["tagline"],
 		})
 	}
 
