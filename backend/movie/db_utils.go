@@ -2,6 +2,7 @@ package movie
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/akhilesh-saipangallu/redis-movies/db"
@@ -19,6 +20,9 @@ func listMoviesWithFilters(ctx context.Context, filters listMovieFilters) ([]mov
 
 	if filters.genre != nil {
 		query = query + fmt.Sprintf(`@genres:{"%s"}`, *filters.genre)
+	}
+	if filters.originalLanguage != nil {
+		query = query + fmt.Sprintf(`@original_language:{"%s"}`, *filters.originalLanguage)
 	}
 	if filters.searchText != nil {
 		query = query + fmt.Sprintf(`@title:*%s*`, *filters.searchText)
@@ -50,6 +54,7 @@ func listMoviesWithFilters(ctx context.Context, filters listMovieFilters) ([]mov
 				{FieldName: "$.title", As: "title"},
 				{FieldName: "$.release_year", As: "release_year"},
 				{FieldName: "$.tagline", As: "tagline"},
+				{FieldName: "$.original_language", As: "original_language"},
 			},
 			DialectVersion: 2,
 		},
@@ -65,12 +70,15 @@ func listMoviesWithFilters(ctx context.Context, filters listMovieFilters) ([]mov
 
 	result := []movieDetails{}
 	for _, doc := range searchResult.Docs {
+		var originalLanguage []string
+		json.Unmarshal([]byte(doc.Fields["original_language"]), &originalLanguage)
 		result = append(result, movieDetails{
-			Id:          doc.Fields["id"],
-			Poster:      doc.Fields["poster"],
-			Title:       doc.Fields["title"],
-			ReleaseYear: doc.Fields["release_year"],
-			Tagline:     doc.Fields["tagline"],
+			Id:               doc.Fields["id"],
+			Poster:           doc.Fields["poster"],
+			Title:            doc.Fields["title"],
+			ReleaseYear:      doc.Fields["release_year"],
+			Tagline:          doc.Fields["tagline"],
+			OriginalLanguage: originalLanguage,
 		})
 	}
 

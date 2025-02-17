@@ -14,10 +14,9 @@ type CardLayoutProps = {
 };
 
 function CardLayout({ movies }: CardLayoutProps) {
-    // const movies = ["m1", "m2", "m3", "m4", "m5"];
     return (
-        <div className="columns is-multiline has-background-grey-lighter m-2 p-2">
-                {movies.map((movie, index) => (
+        <div className="columns is-multiline has-background-light p-2">
+                {movies.map((movie) => (
                     <Card
                         id={movie.id}
                         poster={movie.poster}

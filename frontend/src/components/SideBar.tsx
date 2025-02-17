@@ -22,8 +22,9 @@ function SideBar({ onCategorySelect }: SidebarProps) {
             <p className="menu-label">Languages</p>
             <ul className="menu-list">
                 <li><a className="has-background-light redis-font-color" onClick={() => onCategorySelect("English")}>English</a></li>
-                <li><a className="has-background-light redis-font-color" onClick={() => onCategorySelect("French")}>French</a></li>
-                <li><a className="has-background-light redis-font-color" onClick={() => onCategorySelect("Korean")}>Korean</a></li>
+                <li><a className="has-background-light redis-font-color" onClick={() => onCategorySelect("Italian")}>Italian</a></li>
+                <li><a className="has-background-light redis-font-color" onClick={() => onCategorySelect("German")}>German</a></li>
+                <li><a className="has-background-light redis-font-color" onClick={() => onCategorySelect("Latin")}>Latin</a></li>
                 <li><a className="has-background-light redis-font-color" onClick={() => onCategorySelect("Hindi")}>Hindi</a></li>
             </ul>
         </aside>

@@ -39,6 +39,9 @@ func extractListMovieFilters(r *http.Request) (filters listMovieFilters) {
 	if genre := query.Get("genre"); genre != "" {
 		filters.genre = &genre
 	}
+	if originalLanguage := query.Get("original_language"); originalLanguage != "" {
+		filters.originalLanguage = &originalLanguage
+	}
 
 	if searchText := query.Get("search_text"); searchText != "" {
 		filters.searchText = &searchText

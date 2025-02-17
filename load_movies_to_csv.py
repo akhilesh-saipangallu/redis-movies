@@ -14,6 +14,12 @@ def extract_rotten_tomato_rating(ratings):
             return float(rating['Value'][:-1])
     return 0
 
+def get_revenue(movie):
+    revenue = movie.get('BoxOffice', '$ 0')
+    if revenue == 'N/A':
+        return '$ 0'
+    return revenue
+
 
 def normalize_movie(movies):
     results = []
@@ -37,7 +43,7 @@ def normalize_movie(movies):
             'release_year': movie['release_year'],
             'release_date': release_date,
             'release_date_str': movie['Released'],
-            'revenue': movie.get('BoxOffice', '0'),
+            'revenue': get_revenue(movie),
             'runtime': movie['Runtime'],
             'tagline': movie['Plot'],
             'title': movie['Title'],
@@ -53,4 +59,5 @@ if __name__ == "__main__":
         movies = json.load(file)
         normalized_movies = normalize_movie(movies)
         df = pd.DataFrame(normalized_movies)
-        df.to_csv('movie_data.csv')
+        df_unique = df.drop_duplicates(subset='title')
+        df_unique.to_csv('movie_data.csv')

@@ -5,7 +5,13 @@ import CardLayout from "./CardLayout";
 
 function MainLayout() {
     const [selectedCategory, setSelectedCategory] = useState<string>("");
-    const [movies, setMovies] = useState<{ id: string; poster: string; title: string; release_year: string; tagline: string; }[]>([]);
+    const [movies, setMovies] = useState<{
+        id: string;
+        poster: string;
+        title: string;
+        release_year: string;
+        tagline: string;
+    }[]>([]);
 
     const categoryFilters: Record<string, string> = {
         "Popular": "/popular",
@@ -16,6 +22,12 @@ function MainLayout() {
         "Comedy": "?genre=comedy",
         "Romance": "?genre=romance",
         "Drama": "?genre=drama",
+        
+        "English": "?original_language=English",
+        "Italian": "?original_language=Italian",
+        "Latin": "?original_language=Latin",
+        "German": "?original_language=German",
+        "Hindi": "?original_language=Hindi",
     };
 
     useEffect(() => {
@@ -25,17 +37,15 @@ function MainLayout() {
     }, [selectedCategory]);
 
     const fetchMovies = async (category: string) => {
-        setMovies([]); // Clear current movies while loading new ones
+        setMovies([]);
 
-        // ✅ Get the filter for the selected category
         const filter = categoryFilters[category] || "";
 
         try {
-            // ✅ Append the filter dynamically in the API call
             const response = await fetch(`http://127.0.0.1:8080/movies${filter}`);
             const data = await response.json();
             console.log("movies count:", data)
-            setMovies(data); // Update movie list
+            setMovies(data);
         } catch (error) {
             console.error("Error fetching movies:", error);
         }
@@ -48,9 +58,7 @@ function MainLayout() {
                     <SideBar onCategorySelect={setSelectedCategory}/>
                 </div>
                 <div className="column is-10 has-background-light m-3">
-                <div className="columns is-multiline has-background-grey-lighter m-2 p-2">
                     <CardLayout movies={movies} />
-                </div>
                 </div>
           </div>
       </div>
