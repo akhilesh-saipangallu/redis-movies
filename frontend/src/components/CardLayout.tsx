@@ -7,6 +7,7 @@ type Movie = {
     title: string;
     release_year: string;
     tagline: string;
+    original_language: [];
 };
 
 type CardLayoutProps = {
@@ -23,6 +24,7 @@ function CardLayout({ movies }: CardLayoutProps) {
                         title={movie.title}
                         release_year={movie.release_year}
                         tagline={movie.tagline}
+                        original_language={movie.original_language}
                     />
                 ))}
             </div>

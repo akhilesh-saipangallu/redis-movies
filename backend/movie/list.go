@@ -4,56 +4,49 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
-func HandleListMovies(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-
-	if r.Method != http.MethodGet {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
+func HandleListMovies(c *gin.Context) {
 	// Get all filters
-	filters := extractListMovieFilters(r)
+	filters := extractListMovieFilters(c)
 
-	movies, err := listMoviesWithFilters(r.Context(), filters)
+	movies, err := listMoviesWithFilters(c.Request.Context(), filters)
 	if err != nil {
 		log.Println(err)
-		http.Error(w, newMovieErrorResponseJson("invalid credentials"), http.StatusForbidden)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte(moviesResponseJson(movies)))
+	c.JSON(http.StatusOK, movies)
 }
 
-func extractListMovieFilters(r *http.Request) (filters listMovieFilters) {
+func extractListMovieFilters(c *gin.Context) (filters listMovieFilters) {
 	var err error
-	query := r.URL.Query()
 
-	if genre := query.Get("genre"); genre != "" {
+	if genre := c.DefaultQuery("genre", ""); genre != "" {
 		filters.genre = &genre
 	}
-	if originalLanguage := query.Get("original_language"); originalLanguage != "" {
+	if originalLanguage := c.DefaultQuery("original_language", ""); originalLanguage != "" {
 		filters.originalLanguage = &originalLanguage
 	}
 
-	if searchText := query.Get("search_text"); searchText != "" {
+	if searchText := c.DefaultQuery("search_text", ""); searchText != "" {
 		filters.searchText = &searchText
 	}
 
-	releaseYear, err := strconv.Atoi(query.Get("release_year"))
+	releaseYear, err := strconv.Atoi(c.DefaultQuery("release_year", ""))
 	if err == nil {
 		filters.releaseYear = &releaseYear
 	}
 
-	offset, err := strconv.Atoi(query.Get("offset"))
+	offset, err := strconv.Atoi(c.DefaultQuery("offset", "0"))
 	if err == nil {
 		filters.offset = &offset
 	}
 
-	limit, err := strconv.Atoi(query.Get("limit"))
+	limit, err := strconv.Atoi(c.DefaultQuery("limit", "10"))
 	if err == nil {
 		filters.limit = &limit
 	}

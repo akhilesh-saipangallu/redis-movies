@@ -11,6 +11,7 @@ function MainLayout() {
         title: string;
         release_year: string;
         tagline: string;
+        original_language: [];
     }[]>([]);
 
     const categoryFilters: Record<string, string> = {

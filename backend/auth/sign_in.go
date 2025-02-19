@@ -1,49 +1,40 @@
 package auth
 
 import (
-	"context"
-	"encoding/json"
 	"log"
 	"net/http"
 
+	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 )
 
-func HandleSignIn(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
-	if r.Method != http.MethodPost {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	ctx := context.Background()
+func HandleSignIn(c *gin.Context) {
 	var (
 		err         error
 		requestData SignInRequest
 	)
-	err = json.NewDecoder(r.Body).Decode(&requestData)
+	err = c.BindJSON(&requestData)
 	if err != nil {
-		http.Error(w, newAuthErrorResponseJson("bad request"), http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "bad request"})
 		return
 	}
 
 	validate := validator.New()
 	if err = validate.Struct(requestData); err != nil {
-		http.Error(w, newAuthErrorResponseJson("bad request"), http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "bad request"})
 		return
 	}
 
-	user, err := getUserDetails(ctx, requestData.Email)
+	user, err := getUserDetails(c.Request.Context(), requestData.Email)
 	if err != nil {
 		log.Println(err)
-		http.Error(w, newAuthErrorResponseJson("invalid credentials"), http.StatusForbidden)
+		c.JSON(http.StatusForbidden, gin.H{"error": "invalid credentials"})
 		return
 	}
 
 	// verify password
 	if !verifyPassword(user.Password, requestData.Password) {
-		http.Error(w, newAuthErrorResponseJson("invalid credentials"), http.StatusForbidden)
+		c.JSON(http.StatusForbidden, gin.H{"error": "invalid credentials"})
 		return
 	}
 
@@ -51,10 +42,9 @@ func HandleSignIn(w http.ResponseWriter, r *http.Request) {
 	jwtToken, err := generateJWT(*user)
 	if err != nil {
 		log.Println(err)
-		http.Error(w, newAuthErrorResponseJson("invalid credentials"), http.StatusForbidden)
+		c.JSON(http.StatusForbidden, gin.H{"error": "invalid credentials"})
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.Write([]byte(newSignInResponseJson(jwtToken)))
+	c.JSON(http.StatusOK, gin.H{"token": jwtToken})
 }

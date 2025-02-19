@@ -2,9 +2,9 @@ package auth
 
 import (
 	"fmt"
-	"net/http"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -37,7 +37,12 @@ func generateJWT(user User) (string, error) {
 	return tokenString, err
 }
 
-func GetCurrentUserId(r *http.Request) (string, bool) {
-	userData, ok := r.Context().Value("user_data").(UserPartial)
-	return userData.Id, ok
+func GetCurrentUserId(c *gin.Context) (string, bool) {
+	// userData, ok := c.Get("user_data").(UserPartial)
+	userData, ok := c.Get("user_data")
+	if !ok {
+		return "", ok
+	}
+
+	return userData.(UserPartial).Id, ok
 }

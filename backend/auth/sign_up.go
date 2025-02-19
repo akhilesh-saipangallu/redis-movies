@@ -1,53 +1,51 @@
 package auth
 
 import (
-	"context"
-	"encoding/json"
 	"log"
 	"net/http"
 
+	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 )
 
-func HandleSignUp(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
-	if r.Method != http.MethodPost {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	ctx := context.Background()
+func HandleSignUp(c *gin.Context) {
 	var (
 		err         error
 		requestData SignUpRequest
 	)
-	err = json.NewDecoder(r.Body).Decode(&requestData)
+
+	err = c.BindJSON(&requestData)
 	if err != nil {
-		http.Error(w, newAuthErrorResponseJson("bad request"), http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "bad request"})
 		return
 	}
 
 	validate := validator.New()
 	if err = validate.Struct(requestData); err != nil {
-		http.Error(w, newAuthErrorResponseJson("bad request"), http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "bad request"})
 		return
 	}
 
 	// check if user already exists
-	userExists, err := doesUserExists(ctx, requestData.Email)
+	userExists, err := doesUserExists(c.Request.Context(), requestData.Email)
 
 	if err != nil {
 		log.Printf("HandleSignUp: %v", err)
-		http.Error(w, newAuthErrorResponseJson("internal error"), http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "internal error"})
 		return
 	}
 	if userExists {
-		http.Error(w, newAuthErrorResponseJson("user already exists"), http.StatusBadRequest)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "user already exists"})
 		return
 	}
 
 	// create the user record in DB
-	createUser(ctx, requestData)
-	w.WriteHeader(http.StatusCreated)
+	err = createUser(c.Request.Context(), requestData)
+	if err != nil {
+		log.Println("error: ", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "internal error"})
+		return
+	}
+
+	c.Status(http.StatusCreated)
 }

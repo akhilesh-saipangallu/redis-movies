@@ -1,7 +1,5 @@
 package auth
 
-import "encoding/json"
-
 type SignUpRequest struct {
 	Email     string `json:"email" validate:"required,email"`
 	FirstName string `json:"first_name" validate:"required"`
@@ -22,27 +20,7 @@ type UserPartial struct {
 	Email string
 }
 
-type AuthErrorResponse struct {
-	ErrorMessage string `json:"error"`
-}
-
-func newAuthErrorResponseJson(errorMessage string) string {
-	authError := AuthErrorResponse{ErrorMessage: errorMessage}
-	authErrorJson, _ := json.Marshal(authError)
-	return string(authErrorJson)
-}
-
 type SignInRequest struct {
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required"`
-}
-
-type SignInResponse struct {
-	Token string `json:"token"`
-}
-
-func newSignInResponseJson(token string) string {
-	response := SignInResponse{Token: token}
-	responseJson, _ := json.Marshal(response)
-	return string(responseJson)
 }
