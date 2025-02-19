@@ -99,4 +99,4 @@ def generate_recommendations(user_id, movie_ids):
 
 
 if __name__ == '__main__':
-    generate_recommendations('ef511c64-73aa-486b-ab60-939411b55adf', [149])
+    generate_recommendations('4f6f8aaa-d341-4c34-8b2c-78800b02a1c6', [52])

@@ -19,20 +19,18 @@ function SignUp() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError("");
-        console.log("formData:", formData);
 
         try {
-            const response = await axios.post(`http://localhost:8080/signup`, {
+            await axios.post(`http://localhost:8080/signup`, {
                 first_name: formData.firstName,
                 last_name: formData.lastName,
                 email: formData.email,
                 password: formData.password,
             });
-            console.log("Success:", response);
             navigate("/signin");
         } catch (err) {
             if (axios.isAxiosError(err)) {
-                setError(err.response?.data?.message || "An error occurred");
+                setError(err.response?.data?.error || "An error occurred");
             } else {
                 setError("An unexpected error occurred");
             }

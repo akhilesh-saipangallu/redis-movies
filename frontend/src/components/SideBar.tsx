@@ -9,6 +9,7 @@ function SideBar({ onCategorySelect }: SidebarProps) {
     return (
         <aside className="menu">
             <ul className="menu-list">
+                <li><a className="has-background-light redis-font-color" onClick={() => onCategorySelect("Home")}>Home</a></li>
                 <li><a className="has-background-light redis-font-color" onClick={() => onCategorySelect("Popular")}>Popular</a></li>
                 <li><a className="has-background-light redis-font-color" onClick={() => onCategorySelect("Recommended")}>Recommended</a></li>
             </ul>

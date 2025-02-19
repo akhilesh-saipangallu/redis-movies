@@ -20,11 +20,14 @@ function SignIn() {
                 `http://localhost:8080/signin`,
                 formData
             );
-            console.log("Success:", response.data);
+            const token = response.data.token;
+            // Store the token
+            localStorage.setItem("authToken", token);
+            axios.defaults.headers.common["Authorization"] = `${token}`;
             navigate("/");
         } catch (err) {
             if (axios.isAxiosError(err)) {
-                setError(err.response?.data?.message || "An error occurred");
+                setError(err.response?.data?.error || "An error occurred");
             } else {
                 setError("An unexpected error occurred");
             }

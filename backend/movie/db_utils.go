@@ -49,7 +49,8 @@ func listMoviesWithFilters(ctx context.Context, filters listMovieFilters) ([]mov
 		&redis.FTSearchOptions{
 			LimitOffset: offset,
 			Limit:       limit,
-			SortBy:      []redis.FTSearchSortBy{{FieldName: "popularity", Desc: true}},
+			// SortBy:      []redis.FTSearchSortBy{{FieldName: "popularity", Desc: true}},
+			SortBy: []redis.FTSearchSortBy{{FieldName: "release_year", Desc: true}},
 			Return: []redis.FTSearchReturn{
 				{FieldName: "$.id", As: "id"},
 				{FieldName: "$.poster", As: "poster"},

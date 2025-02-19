@@ -1,22 +1,15 @@
-import "bulma/css/bulma.min.css";
-
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-// import TopNavBar from "./components/TopNavBar";
-// import MainLayout from "./components/MainLayout";
 import { SignIn } from "./components/SignIn";
 import { SignUp } from "./components/SignUp";
+import LandingPage from "./components/LandingPage";
 
 function App() {
     return (
-        // <div className='main-layout-height'>
-        //   <TopNavBar />
-        //   <MainLayout/>
-        // </div>
-
         <Router>
             <Routes>
                 <Route path="/signin" element={<SignIn />} />
                 <Route path="/signup" element={<SignUp />} />
+                <Route path="/" element={<LandingPage />} />
             </Routes>
         </Router>
     );
