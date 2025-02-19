@@ -1,35 +1,47 @@
-import 'bulma/css/bulma.min.css';
-import './SideBar.css'
+import React from "react";
 
-type SidebarProps = {
+interface SideBarProps {
     onCategorySelect: (category: string) => void;
-};
+    selectedCategory: string;
+}
 
-function SideBar({ onCategorySelect }: SidebarProps) {
+function SideBar({ onCategorySelect, selectedCategory }: SideBarProps) {
+    const categories = [
+        "Home",
+        "Popular",
+        "Recommended",
+        "Action",
+        "Comedy",
+        "Romance",
+        "Drama",
+        "English",
+        "Italian",
+        "Latin",
+        "German",
+        "Hindi",
+    ];
+
     return (
-        <aside className="menu">
+        <aside className="menu has-background-light">
             <ul className="menu-list">
-                <li><a className="has-background-light redis-font-color" onClick={() => onCategorySelect("Home")}>Home</a></li>
-                <li><a className="has-background-light redis-font-color" onClick={() => onCategorySelect("Popular")}>Popular</a></li>
-                <li><a className="has-background-light redis-font-color" onClick={() => onCategorySelect("Recommended")}>Recommended</a></li>
-            </ul>
-            <p className="menu-label">Genres</p>
-            <ul className="menu-list">
-                <li><a className="has-background-light redis-font-color" onClick={() => onCategorySelect("Action")}>Action</a></li>
-                <li><a className="has-background-light redis-font-color" onClick={() => onCategorySelect("Comedy")}>Comedy</a></li>
-                <li><a className="has-background-light redis-font-color" onClick={() => onCategorySelect("Romance")}>Romance</a></li>
-                <li><a className="has-background-light redis-font-color" onClick={() => onCategorySelect("Drama")}>Drama</a></li>
-            </ul>
-            <p className="menu-label">Languages</p>
-            <ul className="menu-list">
-                <li><a className="has-background-light redis-font-color" onClick={() => onCategorySelect("English")}>English</a></li>
-                <li><a className="has-background-light redis-font-color" onClick={() => onCategorySelect("Italian")}>Italian</a></li>
-                <li><a className="has-background-light redis-font-color" onClick={() => onCategorySelect("German")}>German</a></li>
-                <li><a className="has-background-light redis-font-color" onClick={() => onCategorySelect("Latin")}>Latin</a></li>
-                <li><a className="has-background-light redis-font-color" onClick={() => onCategorySelect("Hindi")}>Hindi</a></li>
+                {categories.map((category) => {
+                    const isActive = selectedCategory === category;
+                    return (
+                        <li key={category}>
+                            <a
+                                className={`has-background-light ${
+                                    isActive ? "active" : ""
+                                }`}
+                                onClick={() => onCategorySelect(category)}
+                            >
+                                {category}
+                            </a>
+                        </li>
+                    );
+                })}
             </ul>
         </aside>
-    )
+    );
 }
 
 export default SideBar;

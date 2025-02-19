@@ -1,3 +1,17 @@
-.redis-font-color {
-    color: #FF4438
+.menu-list a {
+    display: block;
+    padding: 8px 12px;
+    color: #333;
+    text-decoration: none;
+}
+
+.menu-list a:hover {
+    background-color: #f0f0f0;
+}
+
+.menu-list a.is-active {
+    background-color: #ff3860;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
 }

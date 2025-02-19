@@ -4,9 +4,10 @@ import axiosInstance from "./axiosInstance";
 import "bulma/css/bulma.min.css";
 import SideBar from "./SideBar";
 import CardLayout from "./CardLayout";
+import TopNavBar from "./TopNavBar";
 
 function MainLayout() {
-    const [selectedCategory, setSelectedCategory] = useState<string>("");
+    const [selectedCategory, setSelectedCategory] = useState("Home");
     const [movies, setMovies] = useState<
         {
             id: string;
@@ -46,7 +47,8 @@ function MainLayout() {
             setMovies([]);
             setOffset(0);
             setHasMore(true);
-            setTimeout(() => fetchMovies(selectedCategory, searchText, 0), 0);
+            fetchMovies(selectedCategory, searchText, 0);
+            // setTimeout(() => fetchMovies(selectedCategory, searchText, 0), 0);
         }
     }, [selectedCategory, searchText]);
 
@@ -115,9 +117,13 @@ function MainLayout() {
 
     return (
         <div id="main-layout" className="section m-0 p-0 main-layout-height">
+            <TopNavBar selectedCategory={selectedCategory} />
             <div className="columns">
                 <div className="column is-2 has-background-light ml-3">
-                    <SideBar onCategorySelect={setSelectedCategory} />
+                    <SideBar
+                        onCategorySelect={setSelectedCategory}
+                        selectedCategory={selectedCategory}
+                    />
                 </div>
                 <div className="column is-10 has-background-light m-3">
                     <CardLayout movies={movies} />

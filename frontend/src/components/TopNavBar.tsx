@@ -3,11 +3,14 @@ import { useNavigate } from "react-router-dom";
 import "bulma/css/bulma.min.css";
 import "./TopNavBar.css";
 
-function TopNavBar() {
+interface TopNavBarProps {
+    selectedCategory: string;
+}
+
+function TopNavBar({ selectedCategory }: TopNavBarProps) {
     const navigate = useNavigate();
     const [searchText, setSearchText] = useState("");
 
-    // Redirect to Sign In if auth token is missing
     useEffect(() => {
         const token = localStorage.getItem("authToken");
         if (!token) {
@@ -25,6 +28,10 @@ function TopNavBar() {
         navigate(`/?search_text=${encodeURIComponent(searchText)}`);
     };
 
+    // Hide search bar if "Popular" or "Recommendations" is selected
+    const hideSearch =
+        selectedCategory === "Popular" || selectedCategory === "Recommended";
+
     return (
         <nav className="navbar" role="navigation" aria-label="main navigation">
             <div className="navbar-brand">
@@ -34,26 +41,28 @@ function TopNavBar() {
             </div>
             <div id="navbarBasicExample" className="navbar-menu">
                 <div className="navbar-center">
-                    <form id="search_form" onSubmit={handleSearch}>
-                        <div className="navbar-item field has-addons">
-                            <p className="control is-expanded">
-                                <input
-                                    className="input"
-                                    type="text"
-                                    placeholder="I'm looking for..."
-                                    value={searchText}
-                                    onChange={(e) =>
-                                        setSearchText(e.target.value)
-                                    }
-                                />
-                            </p>
-                            <p className="control">
-                                <button className="button" type="submit">
-                                    Search
-                                </button>
-                            </p>
-                        </div>
-                    </form>
+                    {!hideSearch && (
+                        <form id="search_form" onSubmit={handleSearch}>
+                            <div className="navbar-item field has-addons">
+                                <p className="control is-expanded">
+                                    <input
+                                        className="input"
+                                        type="text"
+                                        placeholder="I'm looking for..."
+                                        value={searchText}
+                                        onChange={(e) =>
+                                            setSearchText(e.target.value)
+                                        }
+                                    />
+                                </p>
+                                <p className="control">
+                                    <button className="button" type="submit">
+                                        Search
+                                    </button>
+                                </p>
+                            </div>
+                        </form>
+                    )}
                 </div>
             </div>
             <div className="navbar-end">
