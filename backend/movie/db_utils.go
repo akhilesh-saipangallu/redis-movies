@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
+	"strings"
 
 	"github.com/akhilesh-saipangallu/redis-movies/db"
 	"github.com/redis/go-redis/v9"
@@ -126,4 +128,63 @@ func getPopularMovies(ctx context.Context) ([]movieDetails, error) {
 	}
 
 	return result, nil
+}
+
+func getStoredListOfRecommendedMovieIds(ctx context.Context, userId string) []string {
+	rdb := db.GetRedisClient()
+	commandResult, err := rdb.JSONGet(ctx, fmt.Sprintf("%s%s", USER_RECOMMENDATIONS_DOC_PREFIX, userId), "$.[*].id").Result()
+	if err != nil {
+		return []string{}
+	}
+
+	movieIds := []string{}
+	err = json.Unmarshal([]byte(commandResult), &movieIds)
+	if err != nil {
+		log.Println("error unmarshaling string:", err)
+	}
+
+	return movieIds
+}
+
+func getMovieDetails(ctx context.Context, movieIds []string) (result []movieDetails, err error) {
+	if len(movieIds) == 0 {
+		return
+	}
+
+	rdb := db.GetRedisClient()
+	searchResult, err := rdb.FTSearchWithArgs(
+		ctx,
+		MOVIE_INDEX,
+		fmt.Sprintf("@id:{%s}", strings.Join(movieIds, "|")),
+		&redis.FTSearchOptions{
+			Return: []redis.FTSearchReturn{
+				{FieldName: "$.id", As: "id"},
+				{FieldName: "$.poster", As: "poster"},
+				{FieldName: "$.title", As: "title"},
+				{FieldName: "$.release_year", As: "release_year"},
+				{FieldName: "$.tagline", As: "tagline"},
+			},
+			DialectVersion: 2,
+		},
+	).Result()
+
+	if err != nil {
+		err = fmt.Errorf("getPopularMovies: error while running redis query: %w", err)
+		return
+	}
+
+	if searchResult.Total == 0 {
+		return []movieDetails{}, nil
+	}
+
+	for _, doc := range searchResult.Docs {
+		result = append(result, movieDetails{
+			Id:          doc.Fields["id"],
+			Poster:      doc.Fields["poster"],
+			Title:       doc.Fields["title"],
+			ReleaseYear: doc.Fields["release_year"],
+			Tagline:     doc.Fields["tagline"],
+		})
+	}
+	return
 }

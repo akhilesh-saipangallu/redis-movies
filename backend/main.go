@@ -13,8 +13,9 @@ func main() {
 	http.HandleFunc("/signin", auth.HandleSignIn)
 
 	// movies
-	http.HandleFunc("/movies", movie.HandleListMovies)
-	http.HandleFunc("/movies/popular", movie.HandlePopularMovies)
+	http.Handle("/movies", auth.AuthMiddleware(http.HandlerFunc(movie.HandleListMovies)))
+	http.Handle("/movies/popular", auth.AuthMiddleware(http.HandlerFunc(movie.HandlePopularMovies)))
+	http.Handle("/movies/recommendations", auth.AuthMiddleware(http.HandlerFunc(movie.HandleRecommendations)))
 
 	log.Println("Server running on port 8080")
 	err := http.ListenAndServe(":8080", nil)

@@ -3,9 +3,9 @@ package movie
 import "encoding/json"
 
 func newMovieErrorResponseJson(errorMessage string) string {
-	authError := movieErrorResponse{ErrorMessage: errorMessage}
-	authErrorJson, _ := json.Marshal(authError)
-	return string(authErrorJson)
+	errorResponse := movieErrorResponse{ErrorMessage: errorMessage}
+	errorJson, _ := json.Marshal(errorResponse)
+	return string(errorJson)
 }
 
 func moviesResponseJson(movies []movieDetails) string {

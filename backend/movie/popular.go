@@ -1,7 +1,6 @@
 package movie
 
 import (
-	"context"
 	"log"
 	"net/http"
 )
@@ -15,10 +14,8 @@ func HandlePopularMovies(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := context.Background()
-
 	// Get top 10 popular movies
-	popularMovies, err := getPopularMovies(ctx)
+	popularMovies, err := getPopularMovies(r.Context())
 	if err != nil {
 		log.Println(err)
 		http.Error(w, newMovieErrorResponseJson("invalid credentials"), http.StatusForbidden)

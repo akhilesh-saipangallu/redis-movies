@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"context"
 	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -37,24 +37,7 @@ func generateJWT(user User) (string, error) {
 	return tokenString, err
 }
 
-func verifyJWT(ctx context.Context, tokenString string) error {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
-		}
-		return []byte(JWT_SECRET_KEY), nil
-	})
-	if err != nil {
-		return fmt.Errorf("verifyJWT: %w", err)
-	}
-
-	if claims, ok := token.Claims.(jwt.MapClaims); ok {
-		ctx = context.WithValue(ctx, "user", UserPartial{
-			Id:    claims["id"].(string),
-			Email: claims["email"].(string),
-		})
-	} else {
-		return fmt.Errorf("verifyJWT: bad claims")
-	}
-	return nil
+func GetCurrentUserId(r *http.Request) (string, bool) {
+	userData, ok := r.Context().Value("user_data").(UserPartial)
+	return userData.Id, ok
 }

@@ -1,9 +1,22 @@
 import ast
+import json
+
+import numpy as np
 import pandas as pd
 import redis
+from sentence_transformers import SentenceTransformer
 
 
-r = redis.Redis(host='localhost', port=6379, db=0)
+redis_client = redis.Redis(host='localhost', port=6379, db=0)
+# embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
+embedding_model = SentenceTransformer('msmarco-distilbert-base-v4')
+
+
+def generate_movie_embedding(title, description, genre):
+    text = f'{title} {description} {genre}'
+    embedding = embedding_model.encode(text).astype(np.float32).tolist()
+
+    return embedding
 
 
 def dump_movies_to_redis(movies):
@@ -11,11 +24,14 @@ def dump_movies_to_redis(movies):
         del movie['Unnamed: 0']
         key = f"movie:{movie['id']}"
 
+        movie['id'] = str(movie['id'])
         movie['genres'] = ast.literal_eval(movie['genres'])
         movie['original_language'] = ast.literal_eval(movie['original_language'])
+        movie['embedding'] = generate_movie_embedding(movie['original_title'], movie['overview'], str(movie['genres']))
 
-        r.json().set(key, '$', movie)
-        print(f"Inserted {key}")
+        redis_client.json().set(key, '$', movie)
+        print(f'Inserted {key}')
+
 
 
 if __name__ == '__main__':
