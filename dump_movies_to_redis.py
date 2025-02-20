@@ -1,5 +1,6 @@
 import ast
 import json
+import os
 
 import numpy as np
 import pandas as pd
@@ -7,7 +8,11 @@ import redis
 from sentence_transformers import SentenceTransformer
 
 
-redis_client = redis.Redis(host='localhost', port=6379, db=0)
+redis_host = os.getenv('REDIS_HOST', 'localhost')
+redis_port = int(os.getenv('REDIS_PORT', 6379))
+
+
+redis_client = redis.Redis(host=redis_host, port=redis_port, db=0)
 # embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
 embedding_model = SentenceTransformer('msmarco-distilbert-base-v4')
 

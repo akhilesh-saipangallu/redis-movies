@@ -38,7 +38,6 @@ func generateJWT(user User) (string, error) {
 }
 
 func GetCurrentUserId(c *gin.Context) (string, bool) {
-	// userData, ok := c.Get("user_data").(UserPartial)
 	userData, ok := c.Get("user_data")
 	if !ok {
 		return "", ok

@@ -1,5 +1,6 @@
 import json
 import time
+import os
 
 import redis
 from redis.commands.search.query import Query
@@ -8,7 +9,9 @@ from sentence_transformers import SentenceTransformer
 
 
 # Redis connection
-redis_client = redis.Redis(host='localhost', port=6379, decode_responses=True)
+redis_host = os.getenv('REDIS_HOST', 'localhost')
+redis_port = int(os.getenv('REDIS_PORT', 6379))
+redis_client = redis.Redis(host=redis_host, port=redis_port, decode_responses=True)
 
 # Load embedding model
 # embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
@@ -55,7 +58,6 @@ def compute_user_profile_embedding(user_id):
 
 def find_similar_movies(user_embedding, top_n=10):
     # Function to find similar movies using Redis Vector Search
-    print('user_embedding: ', user_embedding)
     user_embedding = np.array(user_embedding, dtype=np.float32).tobytes()
 
     INDEX_NAME = 'idx:movies'
@@ -85,7 +87,7 @@ def store_recommendations(user_id, recommended_movies):
     print(f'Stored recommendations for user {user_id}')
 
 # Main function to generate recommendations
-def generate_recommendations(user_id, movie_ids):
+def generate_and_store_recommendations(user_id, movie_ids):
     for movie_id in movie_ids:
         track_user_search(user_id, movie_id)
     
@@ -99,4 +101,4 @@ def generate_recommendations(user_id, movie_ids):
 
 
 if __name__ == '__main__':
-    generate_recommendations('4f6f8aaa-d341-4c34-8b2c-78800b02a1c6', [52])
+    generate_and_store_recommendations('4f6f8aaa-d341-4c34-8b2c-78800b02a1c6', [52])

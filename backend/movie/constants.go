@@ -9,8 +9,11 @@ package movie
 //     $.release_year as release_year NUMERIC SORTABLE
 //     $.tagline as tagline TEXT
 //     $.popularity as popularity NUMERIC SORTABLE
-//     $.original_language as original_language TAG SEPARATOR "," 
+//     $.original_language as original_language TAG SEPARATOR ","
 //     $.embedding as embedding VECTOR FLAT 6 TYPE FLOAT32 DIM 768 DISTANCE_METRIC COSINE
 
-const MOVIE_INDEX string = "idx:movies"
-const USER_RECOMMENDATIONS_DOC_PREFIX string = "user:recommendations:"
+const (
+	MOVIE_INDEX                     string = "idx:movies"
+	STREAM_USER_SEARCH_HISTORY      string = "stream:user:search_history"
+	USER_RECOMMENDATIONS_DOC_PREFIX string = "user:recommendations:"
+)

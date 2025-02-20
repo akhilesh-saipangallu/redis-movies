@@ -1,5 +1,3 @@
-import React from "react";
-
 interface SideBarProps {
     onCategorySelect: (category: string) => void;
     selectedCategory: string;
