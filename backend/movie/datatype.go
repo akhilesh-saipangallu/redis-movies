@@ -7,6 +7,7 @@ type movieDetails struct {
 	ReleaseYear      string   `json:"release_year"`
 	Tagline          string   `json:"tagline"`
 	OriginalLanguage []string `json:"original_language"`
+	Popularity       int      `json:"popularity"`
 }
 
 type movieErrorResponse struct {

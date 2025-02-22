@@ -8,6 +8,7 @@ type Movie = {
     release_year: string;
     tagline: string;
     original_language: [];
+    popularity: number;
 };
 
 type CardLayoutProps = {
@@ -27,6 +28,7 @@ function CardLayout({ movies }: CardLayoutProps) {
                         release_year={movie.release_year}
                         tagline={movie.tagline}
                         original_language={movie.original_language}
+                        popularity={movie.popularity}
                     />
                 ))
             ) : (

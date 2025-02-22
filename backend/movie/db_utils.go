@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strconv"
 	"strings"
 
 	"github.com/akhilesh-saipangallu/redis-movies/db"
@@ -58,6 +59,7 @@ func listMoviesWithFilters(ctx context.Context, filters listMovieFilters) ([]mov
 				{FieldName: "$.release_year", As: "release_year"},
 				{FieldName: "$.tagline", As: "tagline"},
 				{FieldName: "$.original_language", As: "original_language"},
+				{FieldName: "$.popularity", As: "popularity"},
 			},
 			DialectVersion: 2,
 		},
@@ -75,6 +77,10 @@ func listMoviesWithFilters(ctx context.Context, filters listMovieFilters) ([]mov
 	for _, doc := range searchResult.Docs {
 		var originalLanguage []string
 		json.Unmarshal([]byte(doc.Fields["original_language"]), &originalLanguage)
+
+		popularityStr := doc.Fields["popularity"]
+		popularity, _ := strconv.Atoi(popularityStr)
+
 		result = append(result, movieDetails{
 			Id:               doc.Fields["id"],
 			Poster:           doc.Fields["poster"],
@@ -82,6 +88,7 @@ func listMoviesWithFilters(ctx context.Context, filters listMovieFilters) ([]mov
 			ReleaseYear:      doc.Fields["release_year"],
 			Tagline:          doc.Fields["tagline"],
 			OriginalLanguage: originalLanguage,
+			Popularity:       popularity,
 		})
 	}
 
@@ -104,6 +111,8 @@ func getPopularMovies(ctx context.Context) ([]movieDetails, error) {
 				{FieldName: "$.title", As: "title"},
 				{FieldName: "$.release_year", As: "release_year"},
 				{FieldName: "$.tagline", As: "tagline"},
+				{FieldName: "$.original_language", As: "original_language"},
+				{FieldName: "$.popularity", As: "popularity"},
 			},
 			DialectVersion: 2,
 		},
@@ -119,12 +128,20 @@ func getPopularMovies(ctx context.Context) ([]movieDetails, error) {
 
 	result := []movieDetails{}
 	for _, doc := range searchResult.Docs {
+		var originalLanguage []string
+		json.Unmarshal([]byte(doc.Fields["original_language"]), &originalLanguage)
+
+		popularityStr := doc.Fields["popularity"]
+		popularity, _ := strconv.Atoi(popularityStr)
+
 		result = append(result, movieDetails{
-			Id:          doc.Fields["id"],
-			Poster:      doc.Fields["poster"],
-			Title:       doc.Fields["title"],
-			ReleaseYear: doc.Fields["release_year"],
-			Tagline:     doc.Fields["tagline"],
+			Id:               doc.Fields["id"],
+			Poster:           doc.Fields["poster"],
+			Title:            doc.Fields["title"],
+			ReleaseYear:      doc.Fields["release_year"],
+			Tagline:          doc.Fields["tagline"],
+			OriginalLanguage: originalLanguage,
+			Popularity:       popularity,
 		})
 	}
 

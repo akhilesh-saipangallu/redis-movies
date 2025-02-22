@@ -6,7 +6,8 @@ type MovieProps = {
     title: string;
     release_year: string;
     tagline: string;
-    original_language: [];
+    original_language: string[];
+    popularity?: number | null;
 };
 
 function Card({
@@ -16,30 +17,36 @@ function Card({
     release_year,
     tagline,
     original_language,
+    popularity,
 }: MovieProps) {
-    console.log(original_language);
+    const maxTaglineLength = 70;
+    const normalizedPopularity = popularity
+        ? (popularity / 10).toFixed(1)
+        : "N/A";
 
     return (
         <div key={id} className="column is-3">
             <div className="card">
                 <div className="card-image">
                     <figure className="image is-3by4">
-                        <img src={poster} alt="Placeholder image" />
+                        <img src={poster} alt={`${title} Poster`} />
                     </figure>
                 </div>
                 <div className="card-content">
-                    <div className="media">
-                        <div className="media-content">
-                            <p className="title is-4">
-                                {title} | {release_year}
-                            </p>
-                            {/* <p className="subtitle is-6">Languages: {original_language.join(', ')}</p> */}
-                        </div>
-                    </div>
-                    <div className="content">
-                        {tagline}
-                        <br />
-                    </div>
+                    <p className="mb-2">
+                        <strong>★</strong> {normalizedPopularity}
+                    </p>
+                    <p className="title is-5 mb-1">{title}</p>
+                    <p className="subtitle is-6  is-italic mb-3">
+                        {release_year}{" "}
+                        {original_language.length > 0 &&
+                            `/ ${original_language.join(", ")}`}
+                    </p>
+                    <p className="content">
+                        {tagline.length > maxTaglineLength
+                            ? tagline.slice(0, maxTaglineLength) + "..."
+                            : tagline}
+                    </p>
                 </div>
             </div>
         </div>

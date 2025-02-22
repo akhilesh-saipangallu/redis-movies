@@ -16,6 +16,7 @@ function MainLayout() {
             release_year: string;
             tagline: string;
             original_language: [];
+            popularity: number;
         }[]
     >([]);
     const [offset, setOffset] = useState(0);

@@ -34,46 +34,59 @@ function TopNavBar({ selectedCategory }: TopNavBarProps) {
 
     return (
         <nav className="navbar" role="navigation" aria-label="main navigation">
-            <div className="navbar-brand">
-                <a className="navbar-item" href="/">
-                    Redis Movies
-                </a>
-            </div>
-            <div id="navbarBasicExample" className="navbar-menu">
-                <div className="navbar-center">
-                    {!hideSearch && (
-                        <form id="search_form" onSubmit={handleSearch}>
-                            <div className="navbar-item field has-addons">
-                                <p className="control is-expanded">
-                                    <input
-                                        className="input"
-                                        type="text"
-                                        placeholder="I'm looking for..."
-                                        value={searchText}
-                                        onChange={(e) =>
-                                            setSearchText(e.target.value)
-                                        }
-                                    />
-                                </p>
-                                <p className="control">
-                                    <button className="button" type="submit">
-                                        Search
-                                    </button>
-                                </p>
-                            </div>
-                        </form>
-                    )}
+            <div className="columns is-flex-grow-1">
+                <div className="column is-2">
+                    <div className="navbar-brand">
+                        <a className="navbar-item" href="/">
+                            Redis Movies
+                        </a>
+                    </div>
                 </div>
-            </div>
-            <div className="navbar-end">
-                <div className="navbar-item">
-                    <div className="buttons">
-                        <button
-                            className="button is-primary"
-                            onClick={handleLogout}
-                        >
-                            <strong>Logout</strong>
-                        </button>
+                <div className="column is-9">
+                    <div id="navbarBasicExample" className="navbar-menu">
+                        <div className="navbar-center">
+                            {!hideSearch && (
+                                <form id="search_form" onSubmit={handleSearch}>
+                                    <div className="navbar-item field has-addons">
+                                        <p className="control is-expanded">
+                                            <input
+                                                className="input is-rounded"
+                                                type="text"
+                                                placeholder="I'm looking for..."
+                                                value={searchText}
+                                                onChange={(e) =>
+                                                    setSearchText(
+                                                        e.target.value
+                                                    )
+                                                }
+                                            />
+                                        </p>
+                                        <p className="control">
+                                            <button
+                                                className="button is-rounded"
+                                                type="submit"
+                                            >
+                                                Search
+                                            </button>
+                                        </p>
+                                    </div>
+                                </form>
+                            )}
+                        </div>
+                    </div>
+                </div>
+                <div className="column is-1">
+                    <div className="navbar-end">
+                        <div className="navbar-item">
+                            <div className="buttons">
+                                <button
+                                    className="button is-primary is-rounded"
+                                    onClick={handleLogout}
+                                >
+                                    <strong>Logout</strong>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
