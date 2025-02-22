@@ -5,13 +5,14 @@
     text-decoration: none;
 }
 
-.menu-list a:hover {
-    background-color: #f0f0f0;
+a:hover {
+    background-color: #ff3860 !important;
 }
 
-.menu-list a.is-active {
-    background-color: #ff3860;
+.menu-list a.active {
+    background-color: #ff3860 !important;
     color: white;
     font-weight: bold;
     border-radius: 5px;
 }
+

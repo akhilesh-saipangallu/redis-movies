@@ -1,3 +1,5 @@
+import "./SideBar.css";
+
 interface SideBarProps {
     onCategorySelect: (category: string) => void;
     selectedCategory: string;
