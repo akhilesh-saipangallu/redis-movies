@@ -28,6 +28,7 @@ function MainLayout() {
     const searchParams = new URLSearchParams(location.search);
     const searchText = searchParams.get("search_text") || "";
     const hasMoreRef = useRef(hasMore);
+    const loadingRef = useRef(loading);
 
     const categoryFilters: Record<string, string> = {
         Home: "",
@@ -45,10 +46,22 @@ function MainLayout() {
     };
 
     useEffect(() => {
+        hasMoreRef.current = hasMore;
+        console.log("hasMore updated:", hasMore);
+    }, [hasMore]);
+
+    useEffect(() => {
+        loadingRef.current = loading;
+        console.log("loading updated:", loading);
+    }, [loading]);
+
+    useEffect(() => {
         if (selectedCategory || searchText) {
             setMovies([]);
             setOffset(0);
             setHasMore(true);
+            console.log("call 1");
+
             setTimeout(() => fetchMovies(selectedCategory, searchText, 0), 0);
         }
     }, [selectedCategory, searchText]);
@@ -58,23 +71,25 @@ function MainLayout() {
             if (
                 window.innerHeight + window.scrollY >=
                     document.body.offsetHeight - 100 &&
-                !loading &&
+                !loadingRef.current &&
                 hasMoreRef.current
             ) {
+                console.log("call 2");
                 fetchMovies(selectedCategory, searchText, offset);
             }
         };
-
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
-    }, [offset, loading, hasMoreRef.current, selectedCategory, searchText]);
+    }, [offset, loading, hasMore, selectedCategory, searchText]);
 
     const fetchMovies = async (
         category: string,
         searchText: string,
         newOffset: number
     ) => {
-        if (loading || !hasMoreRef.current) return;
+        console.log("fetchMovies called");
+
+        if (loadingRef.current || !hasMoreRef.current) return;
 
         setLoading(true);
         const filter = categoryFilters[category] || "";
@@ -99,10 +114,22 @@ function MainLayout() {
                 setOffset(newOffset + limit);
                 if (newMovies.length < limit) {
                     setHasMore(false);
+                    console.log(
+                        "movie count less: hasMore is false now:",
+                        hasMore,
+                        "hasMoreRef:",
+                        hasMoreRef.current
+                    );
                 }
             } else {
                 setMovies(newMovies);
                 setHasMore(false);
+                console.log(
+                    "non paginated section: hasMore is false now:",
+                    hasMore,
+                    "hasMoreRef:",
+                    hasMoreRef.current
+                );
             }
         } catch (error: any) {
             if (error.response?.status === 401) {
@@ -126,12 +153,12 @@ function MainLayout() {
                 </div>
                 <div className="column is-10 has-background-light m-3">
                     <CardLayout movies={movies} />
-                    {loading && (
+                    {loadingRef.current && (
                         <p className="has-text-centered">
                             Loading more movies...
                         </p>
                     )}
-                    {!hasMoreRef.current && (
+                    {!hasMore && (
                         <p className="has-text-centered">
                             No more movies to show.
                         </p>
