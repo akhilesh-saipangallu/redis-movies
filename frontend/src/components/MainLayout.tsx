@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axiosInstance from "./axiosInstance";
 import "bulma/css/bulma.min.css";
@@ -27,6 +27,7 @@ function MainLayout() {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const searchText = searchParams.get("search_text") || "";
+    const hasMoreRef = useRef(hasMore);
 
     const categoryFilters: Record<string, string> = {
         Home: "",
@@ -48,8 +49,7 @@ function MainLayout() {
             setMovies([]);
             setOffset(0);
             setHasMore(true);
-            fetchMovies(selectedCategory, searchText, 0);
-            // setTimeout(() => fetchMovies(selectedCategory, searchText, 0), 0);
+            setTimeout(() => fetchMovies(selectedCategory, searchText, 0), 0);
         }
     }, [selectedCategory, searchText]);
 
@@ -59,7 +59,7 @@ function MainLayout() {
                 window.innerHeight + window.scrollY >=
                     document.body.offsetHeight - 100 &&
                 !loading &&
-                hasMore
+                hasMoreRef.current
             ) {
                 fetchMovies(selectedCategory, searchText, offset);
             }
@@ -67,20 +67,18 @@ function MainLayout() {
 
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
-    }, [offset, loading, hasMore, selectedCategory, searchText]);
+    }, [offset, loading, hasMoreRef.current, selectedCategory, searchText]);
 
     const fetchMovies = async (
         category: string,
         searchText: string,
         newOffset: number
     ) => {
-        if (loading || !hasMore) return;
+        if (loading || !hasMoreRef.current) return;
 
         setLoading(true);
         const filter = categoryFilters[category] || "";
-        const isPaginated = !["/popular", "/recommendations"].includes(
-            categoryFilters[category]
-        );
+        const isPaginated = !["/popular", "/recommendations"].includes(filter);
 
         let url = isPaginated
             ? `/movies${
@@ -133,7 +131,7 @@ function MainLayout() {
                             Loading more movies...
                         </p>
                     )}
-                    {!hasMore && (
+                    {!hasMoreRef.current && (
                         <p className="has-text-centered">
                             No more movies to show.
                         </p>
