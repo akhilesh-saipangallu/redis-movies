@@ -31,10 +31,11 @@ def consume_messages():
                     generate_and_store_recommendations(user_id, movie_ids)
                 except json.JSONDecodeError:
                     print('error: bad message format; message:', message_data)
-                except Exception:
-                    pass
+                except Exception as e:
+                    print('error:', e)
                 
                 redis_client.xack(stream_name, 'group1', message_id)
+                print(f'Consumer Group 1 (Consumer 1) processing: done')
 
 if __name__ == '__main__':
     consume_messages()

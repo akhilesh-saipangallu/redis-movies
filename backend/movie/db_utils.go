@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"strconv"
 	"strings"
 
 	"github.com/akhilesh-saipangallu/redis-movies/db"
@@ -73,25 +72,7 @@ func listMoviesWithFilters(ctx context.Context, filters listMovieFilters) ([]mov
 		return []movieDetails{}, nil
 	}
 
-	result := []movieDetails{}
-	for _, doc := range searchResult.Docs {
-		var originalLanguage []string
-		json.Unmarshal([]byte(doc.Fields["original_language"]), &originalLanguage)
-
-		popularityStr := doc.Fields["popularity"]
-		popularity, _ := strconv.Atoi(popularityStr)
-
-		result = append(result, movieDetails{
-			Id:               doc.Fields["id"],
-			Poster:           doc.Fields["poster"],
-			Title:            doc.Fields["title"],
-			ReleaseYear:      doc.Fields["release_year"],
-			Tagline:          doc.Fields["tagline"],
-			OriginalLanguage: originalLanguage,
-			Popularity:       popularity,
-		})
-	}
-
+	result := normalizeMovies(searchResult)
 	return result, nil
 }
 
@@ -126,25 +107,7 @@ func getPopularMovies(ctx context.Context) ([]movieDetails, error) {
 		return []movieDetails{}, nil
 	}
 
-	result := []movieDetails{}
-	for _, doc := range searchResult.Docs {
-		var originalLanguage []string
-		json.Unmarshal([]byte(doc.Fields["original_language"]), &originalLanguage)
-
-		popularityStr := doc.Fields["popularity"]
-		popularity, _ := strconv.Atoi(popularityStr)
-
-		result = append(result, movieDetails{
-			Id:               doc.Fields["id"],
-			Poster:           doc.Fields["poster"],
-			Title:            doc.Fields["title"],
-			ReleaseYear:      doc.Fields["release_year"],
-			Tagline:          doc.Fields["tagline"],
-			OriginalLanguage: originalLanguage,
-			Popularity:       popularity,
-		})
-	}
-
+	result := normalizeMovies(searchResult)
 	return result, nil
 }
 
@@ -181,6 +144,8 @@ func getMovieDetails(ctx context.Context, movieIds []string) (result []movieDeta
 				{FieldName: "$.title", As: "title"},
 				{FieldName: "$.release_year", As: "release_year"},
 				{FieldName: "$.tagline", As: "tagline"},
+				{FieldName: "$.original_language", As: "original_language"},
+				{FieldName: "$.popularity", As: "popularity"},
 			},
 			DialectVersion: 2,
 		},
@@ -195,16 +160,8 @@ func getMovieDetails(ctx context.Context, movieIds []string) (result []movieDeta
 		return []movieDetails{}, nil
 	}
 
-	for _, doc := range searchResult.Docs {
-		result = append(result, movieDetails{
-			Id:          doc.Fields["id"],
-			Poster:      doc.Fields["poster"],
-			Title:       doc.Fields["title"],
-			ReleaseYear: doc.Fields["release_year"],
-			Tagline:     doc.Fields["tagline"],
-		})
-	}
-	return
+	result = normalizeMovies(searchResult)
+	return result, nil
 }
 
 func trackUserSearch(ctx context.Context, userId string, movies []movieDetails) error {

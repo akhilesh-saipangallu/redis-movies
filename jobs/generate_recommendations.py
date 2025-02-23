@@ -48,7 +48,7 @@ def compute_user_profile_embedding(user_id):
     weights = np.linspace(1.0, 2.0, num=len(embeddings))
     # Normalize weights
     weights = weights / np.sum(weights)
-    
+
     weighted_embeddings = np.average(embeddings, axis=0, weights=weights)
     user_embedding = weighted_embeddings.tolist()
 
@@ -56,13 +56,23 @@ def compute_user_profile_embedding(user_id):
     return user_embedding
 
 
-def find_similar_movies(user_embedding, top_n=10):
+def find_similar_movies(user_id, user_embedding, top_n=10):
     # Function to find similar movies using Redis Vector Search
     user_embedding = np.array(user_embedding, dtype=np.float32).tobytes()
 
+    # Fetch previously searched movie IDs
+    searched_movie_ids = redis_client.zrange(f'user:search_history:{user_id}', 0, -1)
+
+    # Construct the filter to exclude searched movies
+    if searched_movie_ids:
+        ids_filter = " | ".join(f"{mid}" for mid in searched_movie_ids)
+        exclusion_filter = "(-@id:{" + ids_filter + "})"
+    else:
+        exclusion_filter = ""  # No filter if the user hasn't searched any movies
+
     INDEX_NAME = 'idx:movies'
     query = (
-        Query(f'*=>[KNN {top_n} @embedding $vector AS score]')
+        Query(f'{exclusion_filter}=>[KNN {top_n} @embedding $vector AS score]')
         .sort_by('score')
         .return_fields('id', 'title', 'score')
         # .paging(0, 2)
@@ -90,10 +100,10 @@ def store_recommendations(user_id, recommended_movies):
 def generate_and_store_recommendations(user_id, movie_ids):
     for movie_id in movie_ids:
         track_user_search(user_id, movie_id)
-    
+
     user_embedding = compute_user_profile_embedding(user_id)
     if user_embedding:
-        recommended_movies = find_similar_movies(user_embedding)
+        recommended_movies = find_similar_movies(user_id, user_embedding)
         print('recommended_movies:', recommended_movies)
         store_recommendations(user_id, recommended_movies)
     else:
