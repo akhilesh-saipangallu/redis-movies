@@ -6,25 +6,52 @@ interface SideBarProps {
 }
 
 function SideBar({ onCategorySelect, selectedCategory }: SideBarProps) {
-    const categories = [
-        "Home",
-        "Popular",
-        "Recommended",
-        "Action",
-        "Comedy",
-        "Romance",
-        "Drama",
-        "English",
-        "Italian",
-        "Latin",
-        "German",
-        "Hindi",
-    ];
+    const generalCategories = ["Home", "Popular", "Recommended"];
+    const genres = ["Action", "Comedy", "Romance", "Drama"];
+    const languages = ["English", "Italian", "Latin", "German", "Hindi"];
 
     return (
         <aside className="menu has-background-light">
             <ul className="menu-list">
-                {categories.map((category) => {
+                {generalCategories.map((category) => {
+                    const isActive = selectedCategory === category;
+                    return (
+                        <li key={category}>
+                            <a
+                                className={`has-background-light ${
+                                    isActive ? "active" : ""
+                                }`}
+                                onClick={() => onCategorySelect(category)}
+                            >
+                                {category}
+                            </a>
+                        </li>
+                    );
+                })}
+            </ul>
+
+            <p className="menu-label">Genres</p>
+            <ul className="menu-list">
+                {genres.map((category) => {
+                    const isActive = selectedCategory === category;
+                    return (
+                        <li key={category}>
+                            <a
+                                className={`has-background-light ${
+                                    isActive ? "active" : ""
+                                }`}
+                                onClick={() => onCategorySelect(category)}
+                            >
+                                {category}
+                            </a>
+                        </li>
+                    );
+                })}
+            </ul>
+
+            <p className="menu-label">Languages</p>
+            <ul className="menu-list">
+                {languages.map((category) => {
                     const isActive = selectedCategory === category;
                     return (
                         <li key={category}>
