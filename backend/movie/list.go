@@ -1,12 +1,10 @@
 package movie
 
 import (
-	"context"
 	"log"
 	"net/http"
 	"strconv"
 
-	"github.com/akhilesh-saipangallu/redis-movies/auth"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,18 +19,18 @@ func HandleListMovies(c *gin.Context) {
 		return
 	}
 
-	if filters.searchText != nil {
-		go func() {
-			userId, ok := auth.GetCurrentUserId(c)
-			if !ok {
-				log.Println("error: HandleListMovies: failed to get user id from context to track movies")
-			}
-			err = trackUserSearch(context.Background(), userId, movies)
-			if err != nil {
-				log.Println("error: HandleListMovies:", err)
-			}
-		}()
-	}
+	// if filters.searchText != nil {
+	// 	go func() {
+	// 		userId, ok := auth.GetCurrentUserId(c)
+	// 		if !ok {
+	// 			log.Println("error: HandleListMovies: failed to get user id from context to track movies")
+	// 		}
+	// 		err = trackUserSearch(context.Background(), userId, movies)
+	// 		if err != nil {
+	// 			log.Println("error: HandleListMovies:", err)
+	// 		}
+	// 	}()
+	// }
 
 	c.JSON(http.StatusOK, movies)
 }

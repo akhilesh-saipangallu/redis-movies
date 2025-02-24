@@ -20,6 +20,7 @@ func main() {
 	router.Handle("GET", "/movies", auth.AuthMiddleware, movie.HandleListMovies)
 	router.Handle("GET", "/movies/popular", auth.AuthMiddleware, movie.HandlePopularMovies)
 	router.Handle("GET", "/movies/recommendations", auth.AuthMiddleware, movie.HandleRecommendations)
+	router.Handle("POST", "/movie-click", auth.AuthMiddleware, movie.HandleMovieClickEvent)
 	router.Run()
 
 	log.Println("Server running on port 8080")

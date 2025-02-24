@@ -50,3 +50,7 @@ func normalizeMovies(searchResult redis.FTSearchResult) (result []movieDetails) 
 	}
 	return
 }
+
+type movieClickRequest struct {
+	MovieId string `json:"movie_id"`
+}

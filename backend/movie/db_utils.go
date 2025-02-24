@@ -164,20 +164,42 @@ func getMovieDetails(ctx context.Context, movieIds []string) (result []movieDeta
 	return result, nil
 }
 
-func trackUserSearch(ctx context.Context, userId string, movies []movieDetails) error {
-	movieIds := []string{}
-	for i, movie := range movies {
-		if i >= 2 {
-			break
-		}
-		movieIds = append(movieIds, movie.Id)
-	}
+// func trackUserSearch(ctx context.Context, userId string, movies []movieDetails) error {
+// 	movieIds := []string{}
+// 	for i, movie := range movies {
+// 		if i >= 2 {
+// 			break
+// 		}
+// 		movieIds = append(movieIds, movie.Id)
+// 	}
 
-	if len(movieIds) == 0 {
-		log.Println("warning: no movies to track for user:", userId)
-		return nil
-	}
+// 	if len(movieIds) == 0 {
+// 		log.Println("warning: no movies to track for user:", userId)
+// 		return nil
+// 	}
 
+// 	movieIdsStr, _ := json.Marshal(movieIds)
+
+// 	rdb := db.GetRedisClient()
+// 	_, err := rdb.XAdd(
+// 		ctx, &redis.XAddArgs{
+// 			Stream: STREAM_USER_SEARCH_HISTORY,
+// 			Values: map[string]interface{}{
+// 				"user_id":   userId,
+// 				"movie_ids": movieIdsStr,
+// 			},
+// 		},
+// 	).Result()
+
+// 	if err != nil {
+// 		return fmt.Errorf("trackUserSearch: %w", err)
+// 	}
+// 	log.Println("trackUserSearch: successful for user:", userId)
+// 	return nil
+// }
+
+func trackUserClick(ctx context.Context, userId string, movieId string) error {
+	movieIds := []string{movieId}
 	movieIdsStr, _ := json.Marshal(movieIds)
 
 	rdb := db.GetRedisClient()
@@ -192,8 +214,8 @@ func trackUserSearch(ctx context.Context, userId string, movies []movieDetails) 
 	).Result()
 
 	if err != nil {
-		return fmt.Errorf("trackUserSearch: %w", err)
+		return fmt.Errorf("trackUserClick: %w", err)
 	}
-	log.Println("trackUserSearch: successful for user:", userId)
+	log.Println("trackUserClick: successful for user:", userId)
 	return nil
 }
