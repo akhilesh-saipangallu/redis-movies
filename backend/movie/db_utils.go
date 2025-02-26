@@ -27,7 +27,8 @@ func listMoviesWithFilters(ctx context.Context, filters listMovieFilters) ([]mov
 		query = query + fmt.Sprintf(`@original_language:{"%s"}`, *filters.originalLanguage)
 	}
 	if filters.searchText != nil {
-		query = query + fmt.Sprintf(`@title:%%%s%%`, *filters.searchText)
+		query = query + fmt.Sprintf(`@title:*%s*`, *filters.searchText)
+		// query = query + fmt.Sprintf(`@title:%%%%%s%%%%`, *filters.searchText)
 	}
 	// TODO: year filter
 
